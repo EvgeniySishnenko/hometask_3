@@ -17,49 +17,38 @@
    isAllTrue([100, 2, 3, 4, 5], n => n < 10) // вернет false
  */
 function isAllTrue(array, fn) {
-    if (array == 0 || array.length == 0) {
-        throw new Error('empty array');
-    } else if (typeof fn != 'function') {
-        throw new Error('fn is not a function');
-    }
-
-    try {
-        if (fn(array) == true) {
-            return true;
-          
-        }
-        if (fn(array) == false) {
-            return false; 
-        }
-      
-    } catch (e) {
-      console.log(e.massage);
-    }
-
-}
-
-function fn (arr) {
 
     var countTrue = 0,
         countFalse = 0;
 
-    for (var i = 0; i < arr.length; i++) {
-        if (arr[i] < 10) {
-            countTrue++;
-        } else if (arr[i] > 10) {
-            countFalse++;
+    if (!Array.isArray(array) || array.length <= 0) {
+        throw new Error('empty array');
+    } else if (typeof fn != 'function') {
+        throw new Error('fn is not a function');
+    }
+    try {
+
+        for (var i = 0; i < array.length; i++) {
+            var fun = fn(array[i]);
+
+            if (fun == false) {
+                countFalse++;
+            } else if (fun == true) {
+                countTrue++;
+            }
+            if (array.length == countTrue) {
+                return true;
+            } else if (countFalse > 0) {
+                return false;
+            }
         }
-    }
 
-    if (countTrue == arr.length) {
-        return true;
-    } else if (countFalse > 0) {
-        return false;
+    } catch (e) {
+        console.log(e.massage);
     }
-
 }
 
-isAllTrue([1, 2, 3, 4, 5], fn);
+isAllTrue([100, 2, 3, 4, 5], n => n < 10)
 /*
  Задание 2:
 
@@ -77,47 +66,35 @@ isAllTrue([1, 2, 3, 4, 5], fn);
    isSomeTrue([1, 2, 3, 4, 5], n => n > 20) // вернет false
  */
 function isSomeTrue(array, fn) {
-    if (array == 0 || array.length == 0) {
-        throw new Error('empty array');
+    var countTrue = 0;
+
+    if (!Array.isArray(array) || array.length <= 0) {
+        throw new Error("empty array");
     } else if (typeof fn != 'function') {
-        throw new Error('fn is not a function');
-    }
-
+        throw new Error("fn is not a function");
+    } 
     try {
-        if (fn(array) == true) {
-            return true;
 
+        for (var i = 0; i < array.length; i++) {
+            var fun = fn(array[i]);
+
+            if (fun == true) {
+                countTrue++;
+            }
         }
-        if (fn(array) == false) {
+
+        if (countTrue < 1) {
             return false;
+        } else (countTrue >= 1)
+        {
+            return true;
         }
-
     } catch (e) {
-      console.log(e.massage);
+        console.log(e.massage);
     }
 }
 
-function fn2 (arr) {
-    var countTrue = 0,
-        countFalse = 0;
-
-    for (var i = 0; i < arr.length; i++) {
-        if (arr[i] < 20) {
-            countTrue++;
-        } 
-        if (arr[i] > 20) {
-            countFalse++;
-        }
-    }
-
-    if (countTrue > 0) {
-        return true;
-    } else if (countFalse == arr.length) {
-        return false;
-    }
-
-}
-isSomeTrue([1, 2, 30, 4, 5], fn2);
+isSomeTrue([1, 2, 3, 4, 5], n => n > 20);
 /*
  Задание 3:
 

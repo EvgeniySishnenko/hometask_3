@@ -1,220 +1,177 @@
-/* ДЗ 3 - работа с исключениями и отладчиком */
+import { assert } from 'chai';
+import { randomNumberArray, randomStringArray, randomValue as random } from '../helper';
+import { calculator, isAllTrue, isSomeTrue, returnBadArguments } from '../src/index';
 
-/*
- Задание 1:
+describe('ДЗ 2 - работа с исключениями и отладчиком', () => {
+    describe('isAllTrue', () => {
+        it('должна вызывать fn для всех элементов массива', () => {
+            let array = random('array', 1);
+            let pass = [];
 
- 1.1: Функция принимает массив и фильтрующую фукнцию и должна вернуть true или false
- Функция должна вернуть true только если fn вернула true для всех элементов массива
+            isAllTrue(array, e => pass.push(e));
 
- 1.2: Необходимо выбрасывать исключение в случаях:
-   - array не массив или пустой массив (с текстом "empty array")
-   - fn не является функцией (с текстом "fn is not a function")
+            assert.deepEqual(pass, array);
+        });
 
- Зарпещено использовать встроенные методы для работы с массивами
+        it('должна вернуть true, если fn вернула true для всех элементов массива', () => {
+            let array = randomNumberArray();
+            let result = isAllTrue(array, Number.isFinite);
 
- Пример:
-   isAllTrue([1, 2, 3, 4, 5], n => n < 10) // вернет true
-   isAllTrue([100, 2, 3, 4, 5], n => n < 10) // вернет false
- */
-function isAllTrue(array, fn) {
-    if (array == 0 || array.length == 0) {
-        throw new Error('empty array');
-    } else if (typeof fn != 'function') {
-        throw new Error('fn is not a function');
-    }
+            assert.isTrue(result);
+        });
 
-    try {
-        if (fn(array) == true) {
-            return true;
-          
-        }
-        if (fn(array) == false) {
-            return false; 
-        }
-      
-    } catch (e) {
-      console.log(e.massage);
-    }
+        it('должна вернуть false, если fn вернула false хотя бы для одного элемента массива', () => {
+            let array = randomNumberArray();
 
-}
+            array.push(random('string'));
+            let result = isAllTrue(array, Number.isFinite);
 
-function fn (arr) {
+            assert.isFalse(result);
+        });
 
-    var countTrue = 0,
-        countFalse = 0;
+        it('должна выбросить исключение, если передан пустой массив', () => {
+            assert.throws(isAllTrue.bind(null, [], () => {
+            }), 'empty array');
+        });
 
-    for (var i = 0; i < arr.length; i++) {
-        if (arr[i] < 10) {
-            countTrue++;
-        } else if (arr[i] > 10) {
-            countFalse++;
-        }
-    }
+        it('должна выбросить исключение, если передан не массив', () => {
+            assert.throws(isAllTrue.bind(null,':(', () => {
+            }), 'empty array');
+            assert.throws(isAllTrue.bind(null, {}, () => {
+            }), 'empty array');
+        });
 
-    if (countTrue == arr.length) {
-        return true;
-    } else if (countFalse > 0) {
-        return false;
-    }
+        it('должна выбросить исключение, если fn не функция', () => {
+            let array = randomNumberArray();
 
-}
+            assert.throws(isAllTrue.bind(null, array, ':('), 'fn is not a function');
+        });
+    });
 
-isAllTrue([1, 2, 3, 4, 5], fn);
-/*
- Задание 2:
+    describe('isSomeTrue', () => {
+        it('должна вернуть true, если fn вернула true хотя бы для одного элемента массива', () => {
+            let array = randomStringArray().concat(random('number'));
+            let result = isSomeTrue(array, Number.isFinite);
 
- 2.1: Функция принимает массив и фильтрующую фукнцию и должна вернуть true или false
- Функция должна вернуть true если fn вернула true хотя бы для одного из элементов массива
+            assert.isTrue(result);
+        });
 
- 2.2: Необходимо выбрасывать исключение в случаях:
-   - array не массив или пустой массив (с текстом "empty array")
-   - fn не является функцией (с текстом "fn is not a function")
+        it('должна вернуть false, если fn не вернула true хотя бы для одного элемента массива', () => {
+            let array = randomStringArray();
+            let result = isSomeTrue(array, Number.isFinite);
 
- Зарпещено использовать встроенные методы для работы с массивами
+            assert.isFalse(result);
+        });
 
- Пример:
-   isSomeTrue([1, 2, 30, 4, 5], n => n > 20) // вернет true
-   isSomeTrue([1, 2, 3, 4, 5], n => n > 20) // вернет false
- */
-function isSomeTrue(array, fn) {
-    if (array == 0 || array.length == 0) {
-        throw new Error('empty array');
-    } else if (typeof fn != 'function') {
-        throw new Error('fn is not a function');
-    }
+        it('должна выбросить исключение, если передан пустой массив', () => {
+            assert.throws(isSomeTrue.bind(null, [], () => {
+            }), 'empty array');
+        });
 
-    try {
-        if (fn(array) == true) {
-            return true;
+        it('должна выбросить исключение, если передан не массив', () => {
+            assert.throws(isSomeTrue.bind(null, ':(', () => {
+            }), 'empty array');
+            assert.throws(isSomeTrue.bind(null, {}), 'empty array');
+        });
 
-        }
-        if (fn(array) == false) {
-            return false;
-        }
+        it('должна выбросить исключение, если fn не функция', () => {
+            let array = randomNumberArray();
 
-    } catch (e) {
-      console.log(e.massage);
-    }
-}
+            assert.throws(isSomeTrue.bind(null, array, ':('), 'fn is not a function');
+        });
+    });
 
-function fn2 (arr) {
-    var countTrue = 0,
-        countFalse = 0;
+    describe('returnBadArguments', () => {
+        it('должна вызывать fn для всех элементов массива', () => {
+            let array = random('array', 1);
+            let pass = [];
 
-    for (var i = 0; i < arr.length; i++) {
-        if (arr[i] < 20) {
-            countTrue++;
-        } 
-        if (arr[i] > 20) {
-            countFalse++;
-        }
-    }
+            returnBadArguments(e => pass.push(e), ...array);
 
-    if (countTrue > 0) {
-        return true;
-    } else if (countFalse == arr.length) {
-        return false;
-    }
+            assert.deepEqual(pass, array);
+        });
 
-}
-isSomeTrue([1, 2, 30, 4, 5], fn2);
-/*
- Задание 3:
-
- 3.1: Функция принимает заранее неизветсное количество аргументов, первым из которых является функция fn
- Функция должна поочередно запустить fn для каждого переданного аргумента (кроме самой fn)
-
- 3.2: Функция должна вернуть массив аргументов, для которых fn выбросила исключение
-
- 3.3: Необходимо выбрасывать исключение в случаях:
-   - fn не является функцией (с текстом "fn is not a function")
- */
-function returnBadArguments(fn) {
-    if (typeof fn != 'function') {
-        throw new Error('fn is not a function');
-    }
-   
-    var argTrue,
-        newArray = [];
-
-    for (var i =0; i < arguments.length; i++) {
-        try {
-            argTrue = fn(arguments[i]);
-        } catch (e) {
-            newArray.push = arguments[i];
-        }
-    }
-
-    return newArray;
-}
-
-/*
- Задание 4:
-
- 4.1: Функция имеет параметр number (по умолчанию - 0)
-
- 4.2: Функция должна вернуть объект, у которого должно быть несколько методов:
-   - sum - складывает number с переданными аргументами
-   - dif - вычитает из number переданные аргументы
-   - div - делит number на первый аргумент. Результат делится на следующий аргумент (если передан) и так далее
-   - mul - умножает number на первый аргумент. Результат умножается на следующий аргумент (если передан) и так далее
-
- Количество передаваемых в методы аргументов заранее неизвестно
-
- 4.3: Необходимо выбрасывать исключение в случаях:
-   - number не является числом (с текстом "number is not a number")
-   - какой-либо из аргументов div является нулем (с текстом "division by 0")
- */
-function calculator(number=0) {
-    if (!isFinite(number)) {
-        throw new Error('number is not a number');
-    }
-    try {
-        var argLength = arguments.length,
-            obj = {
-                sum: function () {
-                    for (var i = 0; i < argLength; i++) {
-                        number += arguments[i];
-                    }
-
-                    return number;
-                },
-                dif: function () {
-                    for (var i = 0; i < argLength; i++) {
-                        number -= arguments[i];
-                    }
-
-                    return number;
-                },
-                div: function () {
-                    for (var i = 0; i < argLength; i++) {
-                        if (arguments[i] === 0) {
-                            throw new Error('division by 0');
-                        } 
-                        number /= arguments[i];
-                    }
-
-                    return number;
-                },
-                mul: function () {
-                    for (var i = 0; i < argLength; i++) {
-                        number *= arguments[i];
-                    }
-
-                    return number;
+        it('должна вернуть массив с аргументами, для которых fn выбрасила исключение', () => {
+            let evenNumbers = randomNumberArray('even');
+            let oddNumbers = randomNumberArray('odd');
+            let fn = a => {
+                if (a % 2 != 0) {
+                    throw new Error('not even');
                 }
-
             };
-    } catch (e) {
-        console.log(e.massage);
-    }
-}
+            let result = returnBadArguments(fn, ...evenNumbers, ...oddNumbers);
 
-/* При решении задач, пострайтесь использовать отладчик */
+            assert.deepEqual(result, oddNumbers);
+        });
 
-export {
-    isAllTrue,
-    isSomeTrue,
-    returnBadArguments,
-    calculator
-};
+        it('должна вернуть массив пустой массив, если не передано дополнительных аргументов', () => {
+            let fn = () => ':)';
+            let result = returnBadArguments(fn);
+
+            assert.deepEqual(result, []);
+        });
+
+        it('должна выбросить исключение, если fn не функция', () => {
+            assert.throws(returnBadArguments.bind(null, ':('), 'fn is not a function');
+        });
+    });
+
+    describe('calculator', () => {
+        it('должна возвращать объект с методами', () => {
+            let calc = calculator();
+
+            assert.includeMembers(Object.keys(calc), ['sum', 'dif', 'div', 'mul']);
+        });
+
+        it('метод sum должен складывать аргументы', () => {
+            let initialValue = random('number');
+            let calc = calculator(initialValue);
+            let args = randomNumberArray();
+
+            assert.strictEqual(calc.sum(...args), args.reduce((prev, current) => prev + current, initialValue));
+        });
+
+        it('метод dif должен вычитать аргументы', () => {
+            let initialValue = random('number');
+            let calc = calculator(initialValue);
+            let args = randomNumberArray();
+
+            assert.strictEqual(calc.dif(...args), args.reduce((prev, current) => prev - current, initialValue));
+        });
+
+        it('метод div должен делить аргументы', () => {
+            let initialValue = random('number');
+            let calc = calculator(initialValue);
+            let args = randomNumberArray();
+
+            assert.strictEqual(calc.div(...args), args.reduce((prev, current) => prev / current, initialValue));
+        });
+
+        it('метод div должен выбрасывать исключение, если хотя бы один из аргументов равен 0', () => {
+            let initialValue = random('number');
+            let calc = calculator(initialValue);
+            let args = [...randomNumberArray(), 0];
+
+            assert.throws(calc.div.bind(null, ...args), 'division by 0');
+        });
+
+        it('метод mul должен умножать аргументы', () => {
+            let initialValue = random('number');
+            let calc = calculator(initialValue);
+            let args = randomNumberArray();
+
+            assert.strictEqual(calc.mul(...args), args.reduce((prev, current) => prev * current, initialValue));
+        });
+
+        it('функция должна выбрасывать исключение, если number не является числом', () => {
+            assert.throws(calculator.bind(null, ':('), 'number is not a number');
+        });
+
+        it('значение по умолчанию для аргумента number должно быть равно 0', () => {
+            let calc = calculator();
+            let args = randomNumberArray();
+
+            assert.strictEqual(calc.sum(...args), args.reduce((prev, current) => prev + current));
+        });
+    });
+});
