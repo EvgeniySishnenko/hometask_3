@@ -25,8 +25,7 @@ function isAllTrue(array, fn) {
         throw new Error('empty array');
     } else if (typeof fn != 'function') {
         throw new Error('fn is not a function');
-    }
-    try {
+    } else {
 
         for (var i = 0; i < array.length; i++) {
             var fun = fn(array[i]);
@@ -43,9 +42,7 @@ function isAllTrue(array, fn) {
             }
         }
 
-    } catch (e) {
-        console.log(e.massage);
-    }
+    } 
 }
 
 isAllTrue([100, 2, 3, 4, 5], n => n < 10)
@@ -72,8 +69,7 @@ function isSomeTrue(array, fn) {
         throw new Error("empty array");
     } else if (typeof fn != 'function') {
         throw new Error("fn is not a function");
-    } 
-    try {
+    } else {
 
         for (var i = 0; i < array.length; i++) {
             var fun = fn(array[i]);
@@ -89,9 +85,7 @@ function isSomeTrue(array, fn) {
         {
             return true;
         }
-    } catch (e) {
-        console.log(e.massage);
-    }
+    } 
 }
 
 isSomeTrue([1, 2, 3, 4, 5], n => n > 20);
@@ -106,7 +100,7 @@ isSomeTrue([1, 2, 3, 4, 5], n => n > 20);
  3.3: Необходимо выбрасывать исключение в случаях:
    - fn не является функцией (с текстом "fn is not a function")
  */
-function returnBadArguments(fn) {
+function returnBadArguments(fn, ...arg) {
     if (typeof fn != 'function') {
         throw new Error('fn is not a function');
     }
@@ -114,11 +108,11 @@ function returnBadArguments(fn) {
     var argTrue,
         newArray = [];
 
-    for (var i = 0; i < arguments.length; i++) {
+    for (var i = 0; i < arg.length; i++) {
         try {
-            argTrue = fn(arguments[i]);
+            argTrue = fn(arg[i]);
         } catch (e) {
-            newArray.push = arguments[i];
+            newArray.push(arg[i]);
         }
     }
 
@@ -143,49 +137,57 @@ function returnBadArguments(fn) {
  */
 function calculator(number=0) {
    
-    try {
-        if (!isFinite(number)) {
-            throw new Error('number is not a number');
-        }
-        
-    } catch (e) {
-        console.log(e.massage);
-    }
-    var obj = {
-        sum: function () {
-            for (var i = 0; i < arguments.length; i++) {
-                number += arguments[i];
-            }
-
-            return number;
-        },
-        dif: function () {
-            for (var i = 0; i < arguments.length; i++) {
-                number -= arguments[i];
-            }
-
-            return number;
-        },
-        div: function () {
-            for (var i = 0; i < arguments.length; i++) {
-                if (arguments[i] === 0) {
-                    throw new Error('division by 0');
+    if (!isFinite(number)) {
+        throw new Error ('number is not a number');
+    } else {
+   
+        var obj = {
+            sum: function () {
+                for (var i = 0; i < arguments.length; i++) {
+                    number += arguments[i];
                 }
-                number /= arguments[i];
+
+                return number;
+            },
+            dif: function () {
+                for (var i = 0; i < arguments.length; i++) {
+                    number -= arguments[i];
+                }
+
+                return number;
+            },
+            div: function () {
+                var countZero = 0;
+
+                for (var i = 0; i < arguments.length; i++) {
+                    if (arguments[i] === 0) {
+                        countZero++;
+                        
+                    }   
+                }
+                if (countZero > 0) {
+                    throw new Error ('division by 0');
+                } else {
+
+                    for (var x = 0; x < arguments.length; x++) {
+                        number /= arguments[x];
+                    }    
+                }
+
+                return number;
+            },
+            mul: function () {
+                for (var i = 0; i < arguments.length; i++) {
+                    number *= arguments[i];
+                }
+
+                return number;
             }
 
-            return number;
-        },
-        mul: function () {
-            for (var i = 0; i < arguments.length; i++) {
-                number *= arguments[i];
-            }
+        };
+    }
 
-            return number;
-        }
-
-    };
-    
+    return obj;
 }
 
 /* При решении задач, пострайтесь использовать отладчик */
