@@ -114,7 +114,7 @@ function returnBadArguments(fn) {
     var argTrue,
         newArray = [];
 
-    for (var i =0; i < arguments.length; i++) {
+    for (var i = 0; i < arguments.length; i++) {
         try {
             argTrue = fn(arguments[i]);
         } catch (e) {
@@ -124,7 +124,6 @@ function returnBadArguments(fn) {
 
     return newArray;
 }
-
 /*
  Задание 4:
 
@@ -143,48 +142,50 @@ function returnBadArguments(fn) {
    - какой-либо из аргументов div является нулем (с текстом "division by 0")
  */
 function calculator(number=0) {
-    if (!isFinite(number)) {
-        throw new Error('number is not a number');
-    }
+   
     try {
-        var argLength = arguments.length,
-            obj = {
-                sum: function () {
-                    for (var i = 0; i < argLength; i++) {
-                        number += arguments[i];
-                    }
-
-                    return number;
-                },
-                dif: function () {
-                    for (var i = 0; i < argLength; i++) {
-                        number -= arguments[i];
-                    }
-
-                    return number;
-                },
-                div: function () {
-                    for (var i = 0; i < argLength; i++) {
-                        if (arguments[i] === 0) {
-                            throw new Error('division by 0');
-                        } 
-                        number /= arguments[i];
-                    }
-
-                    return number;
-                },
-                mul: function () {
-                    for (var i = 0; i < argLength; i++) {
-                        number *= arguments[i];
-                    }
-
-                    return number;
-                }
-
-            };
+        if (!isFinite(number)) {
+            throw new Error('number is not a number');
+        }
+        
     } catch (e) {
         console.log(e.massage);
     }
+    var obj = {
+        sum: function () {
+            for (var i = 0; i < arguments.length; i++) {
+                number += arguments[i];
+            }
+
+            return number;
+        },
+        dif: function () {
+            for (var i = 0; i < arguments.length; i++) {
+                number -= arguments[i];
+            }
+
+            return number;
+        },
+        div: function () {
+            for (var i = 0; i < arguments.length; i++) {
+                if (arguments[i] === 0) {
+                    throw new Error('division by 0');
+                }
+                number /= arguments[i];
+            }
+
+            return number;
+        },
+        mul: function () {
+            for (var i = 0; i < arguments.length; i++) {
+                number *= arguments[i];
+            }
+
+            return number;
+        }
+
+    };
+    
 }
 
 /* При решении задач, пострайтесь использовать отладчик */
